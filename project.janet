@@ -1,10 +1,11 @@
 (declare-project 
       :name "trees"
       :description "A smol web server program for editing outlines with a smol command line"
-      :dependencies [
-                     "https://github.com/swlkr/osprey"
-                     ]
-      )
+      :dependencies 
+      [ "https://github.com/swlkr/osprey"
+        "https://github.com/swlkr/janet-html"
+        "https://github.com/yumaikas/praxis"
+        "json" ])
 
 (phone 
   "bundle" [] 
