@@ -140,3 +140,16 @@ export function unlinkChild(id) {
     });
 }
 
+export function mode(target) {
+    if (target === "1l") {
+        return ui({
+            cmd: "mode-one-line",
+        }); 
+    }
+    if (target === "ml") {
+        return ui({
+            cmd: "mode-multi-line"
+        });
+    }
+}
+

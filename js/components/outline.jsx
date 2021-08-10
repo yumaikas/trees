@@ -18,7 +18,8 @@ import {
     closeNode,
     linkChild,
     unlinkChild,
-    showMessage
+    showMessage,
+    mode
 } from "../reducers/actions";
 
 function lexStr(str) {
@@ -132,7 +133,7 @@ export function Node(props) {
 
 function buildCmd(input) {
     let maybeCmd = lexStr(input);
-    if (input.length < 1) {
+    if (input.length < 2) {
         return showMessage("Command needs at least a name and argument!");
     }
     let cmd = maybeCmd;
@@ -145,6 +146,7 @@ function buildCmd(input) {
         "." : selectById(cmd[1]),
         "j" : selectById(cmd[1]),
         "mk": appendSibling(cmd[1]),
+        "md": mode(cmd[1]),
         "ln": linkChild(cmd[1]),
         "ul": unlinkChild(cmd[1]),
         "rp": reparent(cmd[1]),
@@ -209,14 +211,12 @@ export function Outline(props) {
     function dispatch(command) {
         switch (command.type) {
             case "doc": 
+                uiDispatch({cmd:"clear-message"});
                 docDispatch(command.val);
-                if (ui.message) {
-                    // Clear message if it exists
-                    uiDispatch({});
-                }
                 break;
             case "ui":
                 uiDispatch(command.val);
+                break;
         }
     }
 
@@ -224,15 +224,19 @@ export function Outline(props) {
         dispatch(buildCmd(cliInput));
         setCliInput("");
     }
-    let keyup = (e) => {
-        if (e.code === "Enter") {
-            handleCommandSubmit();
-        } 
-    };
-
     let change = (e) => {
         setCliInput(e.target.value);
     };
+
+    let myinput;
+    if (ui.mode === "one-line") {
+        myinput = <input type="text" name="cli" value={cliInput} onInput={change} />;
+    } else if (ui.mode === "multi-line") {
+        myinput = (<div>
+            <textarea value={cliInput} onInput={change} />;
+            <input type="submit"/>
+        </div>);
+    }
 
     return (<div>
         <h2><Link href="/">{description}</Link></h2>
@@ -248,8 +252,7 @@ export function Outline(props) {
             e.preventDefault();
             handleCommandSubmit();
         }} >
-
-            <input type="text" name="cli" value={cliInput} onKeyUp={keyup} onInput={change} /> 
+            {myinput}
         </form>
         <div>{ui.message || ""}</div>
     </div>);

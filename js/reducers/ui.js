@@ -10,17 +10,20 @@ export function uiInitState() {
 }
 
 export const runUi = produce((draft, action) => {
-    if (draft.message) {
-        draft.message == null;
-    }
-
     switch (action.cmd) {
+        case "mode-one-line":
+            draft.mode = "one-line";
+            break;
+        case "mode-multi-line":
+            draft.mode = "multi-line";
+            break;
         case "show-message":
             draft.message = action.message;
             break;
+        case "clear-message":
+            draft.message = "";
         default:
             break;
     }
-    
 });
 
