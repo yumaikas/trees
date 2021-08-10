@@ -1,0 +1,21 @@
+body{max-width:800px;width:90%}
+body,input,select,option,textarea{font-family:Verdana,sans-serif;background:#191e2a;color:#21ef9f}
+td{margin:5px}a{color:#0ff}
+a:visited{color:#008b8b}
+#notes{border-top:1px solid #21ef9f;margin-top:20px}
+code{font-family:Iosevka,monospace}
+pre code{margin-left:30px} 
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 3px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+}
+
+.form-error {
+    color: yellow;
+}
