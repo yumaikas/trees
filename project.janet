@@ -7,7 +7,7 @@
         "https://github.com/yumaikas/praxis"
         "json" ])
 
-(phone 
+(phony
   "bundle" [] 
   (os/cd "js")
   (os/shell "esbuild index.jsx --bundle --outfile=../public/index.js --jsx-factory=h --sourcemap --define:process.env.NODE_ENV='development'")

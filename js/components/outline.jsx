@@ -212,7 +212,15 @@ export function Outline(props) {
             open={open}
             children={children}
         />
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            dispatch(buildCmd(cliInput));
+            setCliInput("");
+        }}
+            action="">
+
         <input type="text" name="cli" value={cliInput} onKeyUp={keyup} onInput={change} /> 
+        </form>
         <div>{outline.message || ""}</div>
         </div>);
 }

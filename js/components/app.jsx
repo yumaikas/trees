@@ -12,19 +12,23 @@ export function App(props) {
             then(resp => resp.json()).
             then(data => setDocs(data));
     }, [toggle]);
+    function createDoc() {
+        fetch("/documents", {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                name: newDocName,
+                outline: newOutline(newDocName, null, Date.now()),
+            })
+        }).then(() => {
+            setToggle((t) => !t);
+            setNewDocName("");
+        });
+    }
+
     let watchNewSave = useCallback((e) => {
         if (e.code === "Enter") {
-            fetch("/documents", {
-                method: 'POST',
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    name: newDocName,
-                    outline: newOutline(newDocName, null, Date.now()),
-                })
-            }).then(() => {
-                setToggle((t) => !t);
-                setNewDocName("");
-            });
+            createDoc();
         }
     });
     
@@ -34,7 +38,12 @@ export function App(props) {
         {docs.map(d => {
             return <h3><Link href={"/outline/" + d.id}>{d.name}</Link></h3>
         })}
-            <input type="text" value={newDocName} onKeyup={watchNewSave} onInput={(e) => { setNewDocName(e.target.value); return true;}}/>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                createDoc();
+            }} >
+                <input type="text" value={newDocName} onKeyup={watchNewSave} onInput={(e) => { setNewDocName(e.target.value); return true;}}/>
+            </form>
         </div>
     );
 }

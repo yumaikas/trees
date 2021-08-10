@@ -36,7 +36,7 @@
       [:meta :charset "utf-8"]
       [:meta 
        :name "viewport" 
-       :content "width=device-width, initial-scale=1.0" ]
+       :content "width=device-width, initial-scale=1" ]
       [:link {:rel "stylesheet" :href "/base.css" }] ]
      [:body body]]))
 
@@ -79,5 +79,5 @@
         (text-of "Saved!"))
 
   (os/shell "start http://localhost:9005/")
-  (server 9005) 
+  (server 9005 "0.0.0.0") 
   )
