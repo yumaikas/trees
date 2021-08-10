@@ -1,8 +1,11 @@
 import {h, render} from 'preact';
 import {Link} from 'preact-router';
+import marked, {parseInline} from "marked";
+import Markup from 'preact-markup';
 import {useState, useReducer, useEffect, useCallback} from 'preact/hooks';
+import { outlineDb, } from "../reducers/outline";
+import { runUi, uiInitState } from "../reducers/ui";
 import {
-    outlineDb, 
     addChild,
     appendSibling,
     zoomNode,
@@ -16,7 +19,7 @@ import {
     linkChild,
     unlinkChild,
     showMessage
-} from "../reducers/outline";
+} from "../reducers/actions";
 
 function lexStr(str) {
     var output = [];
@@ -89,10 +92,19 @@ export function Node(props) {
         open,
     } = props;
 
+
+    function md(str) {
+        if (str.indexOf("\n") > -1) {
+            return marked(str);
+        }
+        return parseInline(str, []);
+    }
+
     if (children.length === 0) {
         return (<div>
             <span style={{"color": "grey", "margin-left": "20px"}}> - #{id}</span> 
-                { (selected_id === id ? "*" : null)}: {description}
+                { (selected_id === id ? "*" : null)}:{" "}
+                <Markup markup={md(description)} wrap={false} type="html" trim={false}/>
         </div>);
     }
 
@@ -100,7 +112,8 @@ export function Node(props) {
         <details open={open} style={{"margin-left":"10px"}} >
             <summary>
                 <span style={{"color": "grey"}}>#{id}</span> 
-                { (selected_id === id ? "*" : null)}: {description}
+             { (selected_id === id ? "*" : null)}:{" "}
+                <Markup markup={md(description)} wrap={false} type="html" trim={false}/>
             </summary>
             {(children || []).map(cid => {
                 let c = node_table[cid];
@@ -119,7 +132,7 @@ export function Node(props) {
 
 function buildCmd(input) {
     let maybeCmd = lexStr(input);
-    if (input.length < 2) {
+    if (input.length < 1) {
         return showMessage("Command needs at least a name and argument!");
     }
     let cmd = maybeCmd;
@@ -127,6 +140,7 @@ function buildCmd(input) {
     let cmdName = cmd[0];
     return  ({
         "a": addChild(cmd.slice(1).join(" ")),
+        "d": setDescription(cmd.slice(1).join(" ")),
         "#" : selectById(cmd[1]),
         "." : selectById(cmd[1]),
         "j" : selectById(cmd[1]),
@@ -135,7 +149,6 @@ function buildCmd(input) {
         "ul": unlinkChild(cmd[1]),
         "rp": reparent(cmd[1]),
         "z" : zoomNode(cmd[1]),
-        "d": setDescription(cmd[1]),
         "c": closeNode(cmd[1]),
         "o": openNode(cmd[1]),
     }[cmdName]) || showMessage("Didn't understand the command?"); 
@@ -178,9 +191,11 @@ export function NetworkedOutline(props) {
     return <Outline data={outline} saveOutline={saveOutline} />;
 }
 
+
 export function Outline(props) {
     let {data, saveOutline} = props;
-    let [outline, dispatch] = useReducer(outlineDb, data);
+    let [outline, docDispatch] = useReducer(outlineDb, data);
+    let [ui, uiDispatch] = useReducer(runUi, uiInitState());
     // Every time the outline changes, save it.
     useEffect(() => {
         if (saveOutline) {
@@ -190,15 +205,32 @@ export function Outline(props) {
     let outline_data = outline.table[outline.top_node];
     let {description, children, id, open} = outline_data;
     let [cliInput, setCliInput] = useState("");
+
+    function dispatch(command) {
+        switch (command.type) {
+            case "doc": 
+                docDispatch(command.val);
+                if (ui.message) {
+                    // Clear message if it exists
+                    uiDispatch({});
+                }
+                break;
+            case "ui":
+                uiDispatch(command.val);
+        }
+    }
+
+    function handleCommandSubmit() {
+        dispatch(buildCmd(cliInput));
+        setCliInput("");
+    }
     let keyup = (e) => {
         if (e.code === "Enter") {
-            dispatch(buildCmd(cliInput));
-            setCliInput("");
+            handleCommandSubmit();
         } 
     };
 
     let change = (e) => {
-        console.log(e.target.value);
         setCliInput(e.target.value);
     };
 
@@ -214,13 +246,11 @@ export function Outline(props) {
         />
         <form onSubmit={(e) => {
             e.preventDefault();
-            dispatch(buildCmd(cliInput));
-            setCliInput("");
-        }}
-            action="">
+            handleCommandSubmit();
+        }} >
 
-        <input type="text" name="cli" value={cliInput} onKeyUp={keyup} onInput={change} /> 
+            <input type="text" name="cli" value={cliInput} onKeyUp={keyup} onInput={change} /> 
         </form>
-        <div>{outline.message || ""}</div>
-        </div>);
+        <div>{ui.message || ""}</div>
+    </div>);
 }
