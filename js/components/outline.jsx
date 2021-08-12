@@ -8,8 +8,9 @@ import { runUi, uiInitState } from "../reducers/ui";
 import {
     addChild,
     appendSibling,
-    zoomNode,
     selectById,
+    zoomNode,
+    zoomFocusNode,
     setDescription,
     moveOver,
     moveUnder,
@@ -151,6 +152,7 @@ function buildCmd(input) {
         "ul": unlinkChild(cmd[1]),
         "rp": reparent(cmd[1]),
         "z" : zoomNode(cmd[1]),
+        "zf" : zoomFocusNode(cmd[1]),
         "c": closeNode(cmd[1]),
         "o": openNode(cmd[1]),
     }[cmdName]) || showMessage("Didn't understand the command?"); 
@@ -230,12 +232,21 @@ export function Outline(props) {
 
     let myinput;
     if (ui.mode === "one-line") {
-        myinput = <input type="text" name="cli" value={cliInput} onInput={change} />;
+        myinput = (<input 
+            autocomplete="off" 
+            type="text"
+            name="cli"
+            autocapitalize="none"
+            value={cliInput}
+            onInput={change} />);
     } else if (ui.mode === "multi-line") {
         myinput = (<div>
             <textarea value={cliInput} onInput={change} />;
             <input type="submit"/>
         </div>);
+    } else if (ui.mode === "buttons") {
+        "a |d |. |mk|md|ul"
+        "ln|rp|z |c |o |zf"
     }
 
     return (<div>

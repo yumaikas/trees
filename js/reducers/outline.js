@@ -1,5 +1,5 @@
 import {saveOutline} from "../client";
-import produce from "immer";
+import produce, {current} from "immer";
 
 /*
 let outline = {
@@ -17,140 +17,6 @@ let outline = {
     changed_timestamp: 1212312
 }
 */
-
-export function showMessage(message) {
-    return {
-        cmd: "show-message",
-        message: message,
-    };
-}
-
-export function addChild(description) {
-    return {
-        cmd: "add-child",
-        node: {
-            id: 0,
-            description: description,
-            children:  []
-        },
-    };
-}
-
-export function appendSibling(description) {
-    return {
-        cmd: "append-sibling",
-        node: {
-            id: 0,
-            description: description,
-            children: []
-        },
-    };
-}
-
-export function zoomNode(id) {
-    if (Number.isNaN(Number.parseInt(id, 10))) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "zoom-node",
-        id: id,
-    };
-}
-
-export function selectById(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "select-by-id",
-        id: nid,
-    };
-}
-
-export function setDescription(description) {
-    return {
-        cmd: "set-description",
-        description: description
-    };
-}
-
-export function openNode(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "open-node",
-        id: nid,
-    }
-}
-
-export function closeNode(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "close-node",
-        id: nid,
-    }
-}
-
-export function moveOver(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "move-over",
-        id: nid,
-    }
-}
-
-export function moveUnder(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "move-under",
-        id: nid,
-    }
-}
-
-export function reparent(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "reparent",
-        id: nid,
-    }
-}
-
-export function linkChild(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "link-child",
-        id: nid,
-    }
-}
-
-export function unlinkChild(id) {
-    let nid = Number.parseInt(id, 10);
-    if (Number.isNaN(nid)) {
-        return showMessage("Could not parse " + id + " as an id");
-    }
-    return {
-        cmd: "unlink-child",
-        id: nid,
-    }
-}
 
 export function newOutline(name, url_id, createdTS) {
     let topNode = {
@@ -221,6 +87,12 @@ export const outlineDb = produce((draft, action) => {
         case "zoom-node":
             draft.top_node = action.id;
             draft.changed_timestamp = Date.now();
+            break;
+        case "zoom-focus-node":
+            draft.top_node = action.id;
+            draft.selected_node = action.id;
+            draft.changed_timestamp = Date.now();
+            console.log(current(draft));
             break;
         case "select-by-id": 
             draft.selected_node = action.id

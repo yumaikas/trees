@@ -1,10 +1,12 @@
-body{max-width:800px;width:90%}
+body{max-width:800px;width:90%;font-size: bigger;}
 body,input,select,option,textarea{font-family:Verdana,sans-serif;background:#191e2a;color:#21ef9f}
 td{margin:5px}a{color:#0ff}
 a:visited{color:#008b8b}
 #notes{border-top:1px solid #21ef9f;margin-top:20px}
 code{font-family:Iosevka,monospace}
 pre code{margin-left:30px} 
+h2{font-size: 2em;}
+h2{font-size: 1.8em;}
 
 table {
     border-collapse: collapse;
@@ -19,3 +21,4 @@ th, td {
 .form-error {
     color: yellow;
 }
+

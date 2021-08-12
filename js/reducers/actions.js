@@ -36,12 +36,24 @@ export function appendSibling(description) {
 }
 
 export function zoomNode(id) {
-    if (Number.isNaN(Number.parseInt(id, 10))) {
+    let nid = Number.parseInt(id, 10);
+    if (Number.isNaN(nid)) {
         return showMessage("Could not parse " + id + " as an id");
     }
     return doc({
         cmd: "zoom-node",
-        id: id,
+        id: nid,
+    });
+}
+
+export function zoomFocusNode(id) {
+    let nid = Number.parseInt(id, 10);
+    if (Number.isNaN(nid)) {
+        return showMessage("Could not parse " + id + " as an id");
+    }
+    return doc({
+        cmd: "zoom-focus-node",
+        id: nid,
     });
 }
 

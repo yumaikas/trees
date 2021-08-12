@@ -3,7 +3,7 @@ import {Router} from 'preact-router';
 import {Link} from 'preact-router/match';
 import {NetworkedOutline} from "./components/outline";
 import {App} from "./components/app";
-import {newOutline, addChild, outlineDb, selectById} from "./reducers/outline";
+import {newOutline, outlineDb } from "./reducers/outline";
 import {createHashHistory} from 'history';
 
 
