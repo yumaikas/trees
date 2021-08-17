@@ -12,6 +12,7 @@ export function App(props) {
             then(resp => resp.json()).
             then(data => setDocs(data));
     }, [toggle]);
+
     function createDoc() {
         fetch("/documents", {
             method: 'POST',
@@ -25,12 +26,6 @@ export function App(props) {
             setNewDocName("");
         });
     }
-
-    let watchNewSave = useCallback((e) => {
-        if (e.code === "Enter") {
-            createDoc();
-        }
-    });
     
     return (
         <div>
