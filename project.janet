@@ -1,6 +1,8 @@
 (declare-project 
       :name "trees"
       :description "A smol web server program for editing outlines with a smol command line"
+      :author "Andrew Owen <yumaikas94@gmail.com>"
+      :url "https://github.com/yumaikas/trees"
       :dependencies 
       [ "https://github.com/swlkr/osprey"
         "https://github.com/swlkr/janet-html"
